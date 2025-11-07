@@ -4,7 +4,7 @@
 ---
 
 ## Game Description
-An exciting cat adventure where you collect fish, fight with your claws, and avoid dangerous items while exploring two different levels! Navigate through beautiful tiled maps with smooth 8-directional movement, dodge bad items, and make your way to the dimensional portal to progress.
+An exciting cat adventure where you collect fish and avoid dangerous items while exploring three different levels! Navigate through beautiful tiled maps with smooth 8-directional movement, dodge bad items and NPCs, and make your way to the dimensional portal to progress.
 
 ---
 
@@ -28,35 +28,49 @@ go run .
   - A / ←: Move left
   - D / →: Move right
   - **Diagonal movement**: Press two keys at once (e.g., W+D for up-right)
-- **Space** or **X**: Attack with claws!
 - **R**: Restart game (when game is over)
 
 ---
 
 ## Game Objectives
 
-### Level 1
+### Level 1 - The Beginning
 1. Collect fish (good items) scattered around the map
 2. Avoid rusty cans (bad items) - they're dangerous for cats!
 3. Collect **at least 9 fish** to unlock the portal
 4. Enter the **Dimensional Portal** (purple swirling portal) to advance to Level 2
 
-### Level 2
+### Level 2 - Getting Harder
 1. Collect more fish while avoiding the bad items
 2. Watch out for the **2 animated NPCs** that move around the map:
    - **Drone Dog** (brown): Moves horizontally back and forth
    - **Angry Character** (pink-haired): Moves vertically up and down
 3. Collect 9 fish to unlock the portal
-4. Enter the portal to win the game!
+4. Enter the portal to reach Level 3!
+
+### Level 3 - FINAL CHALLENGE! 🏆 🚗
+1. The ultimate test with a beautiful new map!
+2. Face **4 NPCs** patrolling the level - twice as many!
+3. **NEW: 2 MOVING CARS!** - Blue Limo & Police Car
+   - Cars move RANDOMLY across the map
+   - Much faster than NPCs
+   - Touching a car = INSTANT GAME OVER!
+4. Collect 9 fish while dodging all the obstacles
+5. Enter the portal one last time to **WIN THE GAME!**
 
 ---
 
 ## Items Guide
 
 ### Good Items (Collect These!) 🐟
-- **Goldfish** (yellow/orange fish): Worth collecting!
-- **Worm** (pink worm): Tasty cat snack!
+- **Goldfish** (yellow/orange fish): Classic favorite!
+- **Rainbow Trout** (colorful fish): Beautiful catch!
+- **Angelfish** (elegant fish): Graceful swimmer!
+- **Bass** (strong fish): Big prize!
+- **Catfish** (whiskered fish): Perfect for a cat!
+- **Worm** (pink worm): Tasty snack!
 - Collect **9 or more** to unlock the portal on each level
+- Items spawn randomly from all types for variety!
 
 ### Bad Items (AVOID These!) ⚠️
 - **Rusty Can** (red can): Dangerous! Touching one ends the game immediately
@@ -74,17 +88,16 @@ go run .
 ## Game Features
 
 ✅ **Window Size**: 800x600 pixels  
-✅ **Tiled Maps**: Two beautiful 20x20 tile maps  
-✅ **TMX Files**: Maps loaded from level1.tmx and level2.tmx  
+✅ **Tiled Maps**: Three beautiful 20x20 tile maps  
+✅ **TMX Files**: Maps loaded from level1.tmx, level2.tmx, and level3.tmx  
 ✅ **Camera System**: Follows the player smoothly  
 ✅ **8-Directional Movement**: Smooth movement in all 8 directions with diagonal support  
-✅ **Attack System**: Press Space or X to attack with animated claw swipes!  
 ✅ **Items**: 17+ good items and 5 bad items per level  
 ✅ **Collection Counter**: Always visible at the top of the screen  
 ✅ **Portal System**: Unlocks at 9 items, leads to next level  
-✅ **Two Levels**: Progress from Level 1 to Level 2  
-✅ **Animated NPCs**: 2 NPCs on Level 2 with movement  
-✅ **Animated Player**: Cat sprite with 8 directional walk and attack animations  
+✅ **Three Levels**: Progress through Level 1 → Level 2 → Level 3 (Final Boss!)  
+✅ **Animated NPCs**: 2 NPCs on Level 2, 4 NPCs + 2 CARS on Level 3 for ultimate challenge!  
+✅ **Animated Player**: Cat sprite with 8 directional walk animations  
 ✅ **Boundary Collision**: Player cannot move off the map  
 ✅ **Embedded Assets**: All assets loaded using go:embed  
 ✅ **Game States**: Playing, Game Over, and Game Won screens  
@@ -106,6 +119,16 @@ go run .
    - Has an angry expression
    - From the Dragon Hero visual novel series
 
+### Level 3 - FINAL CHALLENGE! 🚗
+- **4 NPCs** patrolling the map!
+  - 2x Drone Dogs moving horizontally with longer patrol ranges
+  - 2x Murong Yi characters moving vertically
+- **2 CARS** moving randomly across the map!
+  - **Blue Limo** (cyan/blue car) - Moves at medium speed with random direction changes
+  - **Police Car** (police vehicle) - Moves FASTER with unpredictable patterns
+  - **WARNING**: Touching ANY car = INSTANT GAME OVER!
+- Much harder to navigate - good luck!
+
 ---
 
 ## Portal Recognition
@@ -119,15 +142,17 @@ go run .
 
 ## Game Over Conditions
 - Touching any **bad item** (rusty can) = Instant Game Over
+- Touching any **CAR** on Level 3 = Instant Game Over
 - Press **R** to restart from Level 1
 
 ---
 
 ## Winning the Game
 1. Complete Level 1 by collecting 9+ fish and entering the portal
-2. Complete Level 2 by collecting 9+ fish and entering the portal
-3. See the victory screen with your total collection count!
-4. Press **R** to play again
+2. Complete Level 2 by collecting 9+ fish and entering the portal  
+3. Complete Level 3 (FINAL!) by collecting 9+ fish and entering the portal
+4. Beat all 3 levels to see the victory screen!
+5. Press **R** to play again and try to beat your score!
 
 ---
 

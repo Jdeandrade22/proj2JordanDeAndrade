@@ -25,8 +25,8 @@ func NewItem(x, y float64, itemType ItemType, image *ebiten.Image) *Item {
 	return &Item{
 		x:        x,
 		y:        y,
-		width:    32,
-		height:   32,
+		width:    64, // Doubled from 32 to 64
+		height:   64, // Doubled from 32 to 64
 		itemType: itemType,
 		image:    image,
 	}
@@ -38,7 +38,11 @@ func (i *Item) Draw(screen *ebiten.Image, cameraX, cameraY float64) {
 	}
 
 	op := &ebiten.DrawImageOptions{}
+
+	// Scale the item to be bigger (2x size)
+	op.GeoM.Scale(2.0, 2.0)
 	op.GeoM.Translate(i.x-cameraX, i.y-cameraY)
+
 	screen.DrawImage(i.image, op)
 }
 

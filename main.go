@@ -37,6 +37,7 @@ const (
 type Game struct {
 	player         *Player
 	npcs           []*NPC
+	cars           []*Car // New: Cars for level 3!
 	items          []*Item
 	portal         *Item
 	tileMap        *TileMap
@@ -48,12 +49,18 @@ type Game struct {
 	portalUnlocked bool
 
 	// Asset images
-	goldfishImg *ebiten.Image
-	wormImg     *ebiten.Image
-	badItemImg  *ebiten.Image
-	portalImg   *ebiten.Image
-	dogNPCImg   *ebiten.Image
-	npc2Img     *ebiten.Image
+	goldfishImg     *ebiten.Image
+	rainbowTroutImg *ebiten.Image
+	angelfishImg    *ebiten.Image
+	bassImg         *ebiten.Image
+	catfishImg      *ebiten.Image
+	wormImg         *ebiten.Image
+	badItemImg      *ebiten.Image
+	portalImg       *ebiten.Image
+	dogNPCImg       *ebiten.Image
+	npc2Img         *ebiten.Image
+	blueCarImg      *ebiten.Image // New: Blue Limo
+	policeCarImg    *ebiten.Image // New: Police Car
 }
 
 func NewGame() *Game {
@@ -74,12 +81,23 @@ func NewGame() *Game {
 }
 
 func (g *Game) loadAssets() {
+	// Load all fish items
 	g.goldfishImg = g.loadImageFromFS("assets/items/Goldfish.png")
+	g.rainbowTroutImg = g.loadImageFromFS("assets/items/Rainbow Trout.png")
+	g.angelfishImg = g.loadImageFromFS("assets/items/Angelfish.png")
+	g.bassImg = g.loadImageFromFS("assets/items/Bass.png")
+	g.catfishImg = g.loadImageFromFS("assets/items/Catfish.png")
 	g.wormImg = g.loadImageFromFS("assets/items/Worm.png")
+
+	// Load bad items and other assets
 	g.badItemImg = g.loadImageFromFS("assets/items/Rusty Can.png")
 	g.portalImg = g.loadImageFromFS("assets/sprites/Dimensional_Portal.png")
 	g.dogNPCImg = g.loadImageFromFS("assets/npc/drone dog.png")
 	g.npc2Img = g.loadImageFromFS("assets/npc/mry_dgh_angry.png")
+
+	// Load car sprite sheets for level 3
+	g.blueCarImg = g.loadImageFromFS("assets/npc/Blue_LIMO_CLEAN_All_000-sheet.png")
+	g.policeCarImg = g.loadImageFromFS("assets/npc/POLICE_CLEAN_ALLD0000-sheet.png")
 }
 
 func (g *Game) loadImageFromFS(path string) *ebiten.Image {
@@ -121,20 +139,19 @@ func (g *Game) loadLevel(level int) {
 
 		// Create player for level 1 - Cat character with all 8 directions
 		var walkSprites [8]*ebiten.Image
-		var attackSprites [8]*ebiten.Image
 
 		// Load all 8 walk sprites
 		for i := 0; i < 8; i++ {
 			walkSprites[i] = g.loadImageFromFS(fmt.Sprintf("assets/sprites/walk_%d.png", i+1))
-			attackSprites[i] = g.loadImageFromFS(fmt.Sprintf("assets/sprites/attack_%d.png", i+1))
 		}
 
-		g.player = NewPlayer(100, 100, walkSprites, attackSprites)
+		g.player = NewPlayer(100, 100, walkSprites)
 
 		// No NPCs on level 1
 		g.npcs = []*NPC{}
+		g.cars = []*Car{} // No cars either
 
-	} else {
+	} else if level == 2 {
 		tmxData, err = assetsFS.ReadFile("assets/background/level2.tmx")
 		if err != nil {
 			log.Fatal("Failed to load level2.tmx:", err)
@@ -154,10 +171,42 @@ func (g *Game) loadLevel(level int) {
 		g.player.x = 100
 		g.player.y = 100
 
-		// Add NPCs to level 2
+		// Add 2 NPCs to level 2
 		g.npcs = []*NPC{
 			NewNPC(400, 300, g.dogNPCImg, 150, true), // Horizontal movement
 			NewNPC(800, 200, g.npc2Img, 100, false),  // Vertical movement
+		}
+		g.cars = []*Car{} // No cars on level 2
+
+	} else if level == 3 {
+		// LEVEL 3 - FINAL BOSS LEVEL!
+		tmxData, err = assetsFS.ReadFile("assets/background/level3.tmx")
+		if err != nil {
+			log.Fatal("Failed to load level3.tmx:", err)
+		}
+
+		// Load level 3 tileset
+		img := g.loadImageFromFS("assets/background/orig_big1.png")
+		tilesetImages = map[string]*ebiten.Image{
+			"orig_big1.png": img,
+		}
+
+		// Reset player position for level 3
+		g.player.x = 100
+		g.player.y = 100
+
+		// Add MORE NPCs to level 3 - make it harder!
+		g.npcs = []*NPC{
+			NewNPC(300, 250, g.dogNPCImg, 200, true), // Horizontal - longer range
+			NewNPC(600, 400, g.npc2Img, 150, false),  // Vertical
+			NewNPC(900, 300, g.dogNPCImg, 180, true), // Another horizontal
+			NewNPC(450, 600, g.npc2Img, 120, false),  // Another vertical
+		}
+
+		// Add CARS that move randomly - AVOID THEM!
+		g.cars = []*Car{
+			NewCar(400, 200, g.blueCarImg, 2.5),   // Blue Limo - faster
+			NewCar(700, 500, g.policeCarImg, 3.0), // Police Car - even faster!
 		}
 	}
 
@@ -182,17 +231,22 @@ func (g *Game) spawnItems() {
 	mapWidth := g.tileMap.Width()
 	mapHeight := g.tileMap.Height()
 
-	// Spawn 15+ good items (mix of goldfish and worms)
+	// Spawn 15+ good items (random mix of all fish types!)
+	goodItems := []*ebiten.Image{
+		g.goldfishImg,
+		g.rainbowTroutImg,
+		g.angelfishImg,
+		g.bassImg,
+		g.catfishImg,
+		g.wormImg,
+	}
+
 	for i := 0; i < 17; i++ {
 		x := float64(rand.Intn(mapWidth-100) + 50)
 		y := float64(rand.Intn(mapHeight-100) + 50)
 
-		var img *ebiten.Image
-		if i%2 == 0 {
-			img = g.goldfishImg
-		} else {
-			img = g.wormImg
-		}
+		// Randomly select from all available fish/worm images
+		img := goodItems[rand.Intn(len(goodItems))]
 
 		g.items = append(g.items, NewItem(x, y, ItemGood, img))
 	}
@@ -216,9 +270,14 @@ func (g *Game) Update() error {
 		// Update player
 		g.player.Update(g.tileMap.Width(), g.tileMap.Height())
 
-		// Update NPCs (only on level 2)
+		// Update NPCs
 		for _, npc := range g.npcs {
 			npc.Update()
+		}
+
+		// Update Cars (only on level 3)
+		for _, car := range g.cars {
+			car.Update(g.tileMap.Width(), g.tileMap.Height())
 		}
 
 		// Update camera to follow player
@@ -259,6 +318,13 @@ func (g *Game) Update() error {
 			}
 		}
 
+		// Check car collisions (level 3 only) - GAME OVER if hit!
+		for _, car := range g.cars {
+			if car.CheckCollision(px, py, pw, ph) {
+				g.state = StateGameOver
+			}
+		}
+
 		// Check portal collision if unlocked
 		if g.portalUnlocked && g.portal.CheckCollision(px, py, pw, ph) {
 			if g.currentLevel == 1 {
@@ -267,8 +333,14 @@ func (g *Game) Update() error {
 				g.itemsCollected = 0
 				g.loadLevel(2)
 				g.state = StatePlaying
+			} else if g.currentLevel == 2 {
+				// Move to level 3 - FINAL LEVEL!
+				g.currentLevel = 3
+				g.itemsCollected = 0
+				g.loadLevel(3)
+				g.state = StatePlaying
 			} else {
-				// Game won!
+				// Beat level 3 - GAME WON!
 				g.state = StateGameWon
 			}
 		}
@@ -322,6 +394,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			npc.Draw(screen, g.cameraX, g.cameraY)
 		}
 
+		// Draw Cars (level 3)
+		for _, car := range g.cars {
+			car.Draw(screen, g.cameraX, g.cameraY)
+		}
+
 		// Draw player
 		g.player.Draw(screen, g.cameraX, g.cameraY)
 
@@ -334,10 +411,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		text.Draw(screen, "Press R to restart", basicfont.Face7x13, screenWidth/2-80, screenHeight/2+40, color.White)
 
 	} else if g.state == StateGameWon {
-		text.Draw(screen, "CONGRATULATIONS!", basicfont.Face7x13, screenWidth/2-70, screenHeight/2, color.White)
-		text.Draw(screen, "You completed both levels!", basicfont.Face7x13, screenWidth/2-100, screenHeight/2+20, color.White)
-		text.Draw(screen, fmt.Sprintf("Total items collected: %d", g.itemsCollected), basicfont.Face7x13, screenWidth/2-100, screenHeight/2+40, color.White)
-		text.Draw(screen, "Press R to play again", basicfont.Face7x13, screenWidth/2-90, screenHeight/2+60, color.White)
+		text.Draw(screen, "CONGRATULATIONS!", basicfont.Face7x13, screenWidth/2-70, screenHeight/2-20, color.White)
+		text.Draw(screen, "YOU BEAT ALL 3 LEVELS!", basicfont.Face7x13, screenWidth/2-100, screenHeight/2, color.White)
+		text.Draw(screen, "You are a true Cat Champion!", basicfont.Face7x13, screenWidth/2-110, screenHeight/2+20, color.White)
+		text.Draw(screen, fmt.Sprintf("Final score: %d fish collected", g.itemsCollected), basicfont.Face7x13, screenWidth/2-120, screenHeight/2+40, color.White)
+		text.Draw(screen, "Press R to play again", basicfont.Face7x13, screenWidth/2-90, screenHeight/2+70, color.White)
 	}
 }
 
@@ -362,7 +440,7 @@ func (g *Game) drawUI(screen *ebiten.Image) {
 	text.Draw(screen, portalText, basicfont.Face7x13, screenWidth-250, 20, color.RGBA{255, 215, 0, 255})
 
 	// Controls
-	controlsText := "WASD: Move | Space/X: Attack"
+	controlsText := "WASD/Arrows: Move"
 	text.Draw(screen, controlsText, basicfont.Face7x13, screenWidth-250, 35, color.RGBA{200, 200, 200, 255})
 }
 

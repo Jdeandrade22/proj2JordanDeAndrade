@@ -5,19 +5,16 @@ import (
 )
 
 type Player struct {
-	walkSprites   [8]*AnimatedSprite // All 8 walk animations
-	attackSprites [8]*AnimatedSprite // All 8 attack animations
-	x, y          float64
-	width         int
-	height        int
-	direction     int // 0-7 for 8 directions
-	isMoving      bool
-	isAttacking   bool
-	attackTimer   int
-	speed         float64
+	walkSprites [8]*AnimatedSprite // All 8 walk animations
+	x, y        float64
+	width       int
+	height      int
+	direction   int // 0-7 for 8 directions
+	isMoving    bool
+	speed       float64
 }
 
-func NewPlayer(x, y float64, walkSprites [8]*ebiten.Image, attackSprites [8]*ebiten.Image) *Player {
+func NewPlayer(x, y float64, walkSprites [8]*ebiten.Image) *Player {
 	p := &Player{
 		x:         x,
 		y:         y,
@@ -32,36 +29,10 @@ func NewPlayer(x, y float64, walkSprites [8]*ebiten.Image, attackSprites [8]*ebi
 		p.walkSprites[i] = NewAnimatedSprite(walkSprites[i], 64, 64)
 	}
 
-	// Initialize attack sprites
-	for i := 0; i < 8; i++ {
-		p.attackSprites[i] = NewAnimatedSprite(attackSprites[i], 64, 64)
-	}
-
 	return p
 }
 
 func (p *Player) Update(mapWidth, mapHeight int) {
-	// Handle attack timer
-	if p.isAttacking {
-		p.attackTimer--
-		if p.attackTimer <= 0 {
-			p.isAttacking = false
-		}
-	}
-
-	// Check for attack input (Space or X key)
-	if !p.isAttacking && (ebiten.IsKeyPressed(ebiten.KeySpace) || ebiten.IsKeyPressed(ebiten.KeyX)) {
-		p.isAttacking = true
-		p.attackTimer = 30                            // Attack lasts 30 frames (~0.5 seconds)
-		p.attackSprites[p.direction].currentFrame = 0 // Reset attack animation
-	}
-
-	// Don't move while attacking
-	if p.isAttacking {
-		p.attackSprites[p.direction].Update()
-		return
-	}
-
 	p.isMoving = false
 
 	// Handle 8-directional movement
@@ -139,14 +110,14 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 func (p *Player) Draw(target *ebiten.Image, cameraX, cameraY float64) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(p.x-cameraX, p.y-cameraY)
-
-	if p.isAttacking {
-		p.attackSprites[p.direction].Draw(target, op)
-	} else {
-		p.walkSprites[p.direction].Draw(target, op)
-	}
+	p.walkSprites[p.direction].Draw(target, op)
 }
 
 func (p *Player) GetBounds() (float64, float64, float64, float64) {
-	return p.x, p.y, float64(p.width), float64(p.height)
+	// Make the hitbox smaller - add padding on all sides
+	hitboxPadding := 16.0 // pixels of padding on each side
+	return p.x + hitboxPadding,
+		p.y + hitboxPadding,
+		float64(p.width) - (hitboxPadding * 2),
+		float64(p.height) - (hitboxPadding * 2)
 }
