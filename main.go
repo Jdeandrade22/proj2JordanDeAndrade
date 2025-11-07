@@ -91,7 +91,7 @@ func (g *Game) loadAssets() {
 
 	// Load bad items and other assets
 	g.badItemImg = g.loadImageFromFS("assets/items/Rusty Can.png")
-	g.portalImg = g.loadImageFromFS("assets/sprites/Dimensional_Portal.png")
+	g.portalImg = g.loadImageFromFS("assets/items/Dimensional_Portal.png")
 	g.dogNPCImg = g.loadImageFromFS("assets/npc/drone dog.png")
 	g.npc2Img = g.loadImageFromFS("assets/npc/mry_dgh_angry.png")
 
@@ -279,6 +279,9 @@ func (g *Game) Update() error {
 		for _, car := range g.cars {
 			car.Update(g.tileMap.Width(), g.tileMap.Height())
 		}
+
+		// Update portal animation
+		g.portal.Update()
 
 		// Update camera to follow player
 		g.cameraX = g.player.x - float64(screenWidth)/2 + float64(g.player.width)/2

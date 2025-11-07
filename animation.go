@@ -19,6 +19,7 @@ type AnimatedSprite struct {
 	currentFrame int
 	lastUpdate   time.Time
 	row          int // which row in the sprite sheet (for different animations)
+	frameCount   int // number of frames to cycle through
 }
 
 func NewAnimatedSprite(sheet *ebiten.Image, frameWidth, frameHeight int) *AnimatedSprite {
@@ -27,14 +28,15 @@ func NewAnimatedSprite(sheet *ebiten.Image, frameWidth, frameHeight int) *Animat
 		frameWidth:  frameWidth,
 		frameHeight: frameHeight,
 		lastUpdate:  time.Now(),
-		row:         0, // default to first row (down animation)
+		row:         0,           // default to first row (down animation)
+		frameCount:  FRAME_COUNT, // default to 8 frames for player sprites
 	}
 }
 
 func (a *AnimatedSprite) Update() {
 	now := time.Now()
 	if now.Sub(a.lastUpdate) > ANIMATION_SPEED*time.Millisecond {
-		a.currentFrame = (a.currentFrame + 1) % FRAME_COUNT
+		a.currentFrame = (a.currentFrame + 1) % a.frameCount
 		a.lastUpdate = now
 	}
 }
@@ -44,8 +46,14 @@ func (a *AnimatedSprite) SetAnimationRow(row int) {
 }
 
 func (a *AnimatedSprite) Draw(target *ebiten.Image, op *ebiten.DrawImageOptions) {
-	frameX := a.currentFrame * a.frameWidth
-	frameY := a.row * a.frameHeight
+	// Calculate frame position in the sprite sheet
+	// For multi-row sprites (like portal 3x2), calculate row and column
+	sheetCols := a.sheet.Bounds().Dx() / a.frameWidth
+	frameCol := a.currentFrame % sheetCols
+	frameRow := a.currentFrame / sheetCols
+
+	frameX := frameCol * a.frameWidth
+	frameY := frameRow * a.frameHeight
 
 	frame := a.sheet.SubImage(image.Rect(
 		frameX, frameY,
