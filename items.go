@@ -18,7 +18,7 @@ type Item struct {
 	height         int
 	itemType       ItemType
 	image          *ebiten.Image
-	animatedSprite *AnimatedSprite // For animated items like portal
+	animatedSprite *AnimatedSprite //portal
 	collected      bool
 }
 
@@ -26,40 +26,47 @@ func NewItem(x, y float64, itemType ItemType, image *ebiten.Image) *Item {
 	item := &Item{
 		x:        x,
 		y:        y,
-		width:    64, // Doubled from 32 to 64
-		height:   64, // Doubled from 32 to 64
+		width:    64,
+		height:   64,
 		itemType: itemType,
 		image:    image,
 	}
 
-	// If it's a portal, make it animated (3x2 grid = 6 frames at 32x32 each)
+	//portal generation
 	if itemType == ItemPortal {
-		item.animatedSprite = NewAnimatedSprite(image, 32, 32) // 96x64 sprite sheet / 3x2 = 32x32 per frame
-		item.animatedSprite.frameCount = 6                     // Portal has 6 frames (3 columns x 2 rows)
+		item.animatedSprite = NewAnimatedSprite(image, 32, 32)
+		item.animatedSprite.frameCount = 6
 	}
 
 	return item
 }
 
 func (i *Item) Update() {
-	// Update animation for animated items (like portal)
+	//animation portal
 	if i.animatedSprite != nil {
 		i.animatedSprite.Update()
 	}
 }
 
 func (i *Item) Draw(screen *ebiten.Image, cameraX, cameraY float64) {
+	i.DrawWithAlpha(screen, cameraX, cameraY, 1.0)
+}
+
+func (i *Item) DrawWithAlpha(screen *ebiten.Image, cameraX, cameraY, alpha float64) {
 	if i.collected {
 		return
 	}
 
 	op := &ebiten.DrawImageOptions{}
 
-	// Scale the item to be bigger (2x size)
+	//item size
 	op.GeoM.Scale(2.0, 2.0)
 	op.GeoM.Translate(i.x-cameraX, i.y-cameraY)
 
-	// Use animated sprite if available (for portal)
+	// Apply alpha/opacity
+	op.ColorScale.ScaleAlpha(float32(alpha))
+
+	//load sprite
 	if i.animatedSprite != nil {
 		i.animatedSprite.Draw(screen, op)
 	} else {

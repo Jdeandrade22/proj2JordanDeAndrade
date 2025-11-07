@@ -49,18 +49,18 @@ type Game struct {
 	portalUnlocked bool
 
 	// Asset images
-	goldfishImg     *ebiten.Image
-	rainbowTroutImg *ebiten.Image
-	angelfishImg    *ebiten.Image
-	bassImg         *ebiten.Image
-	catfishImg      *ebiten.Image
-	wormImg         *ebiten.Image
-	badItemImg      *ebiten.Image
-	portalImg       *ebiten.Image
-	dogNPCImg       *ebiten.Image
-	npc2Img         *ebiten.Image
-	blueCarImg      *ebiten.Image // New: Blue Limo
-	policeCarImg    *ebiten.Image // New: Police Car
+	goldfishImg       *ebiten.Image
+	rainbowTroutImg   *ebiten.Image
+	angelfishImg      *ebiten.Image
+	bassImg           *ebiten.Image
+	catfishImg        *ebiten.Image
+	wormImg           *ebiten.Image
+	badItemImg        *ebiten.Image
+	portalImg         *ebiten.Image
+	femalePortraitImg *ebiten.Image // Female portrait
+	femaleWalkImg     *ebiten.Image // Female walk and idle sprite sheet
+	blueCarImg        *ebiten.Image // Blue Limo
+	policeCarImg      *ebiten.Image // Police Car
 }
 
 func NewGame() *Game {
@@ -92,10 +92,12 @@ func (g *Game) loadAssets() {
 	// Load bad items and other assets
 	g.badItemImg = g.loadImageFromFS("assets/items/Rusty Can.png")
 	g.portalImg = g.loadImageFromFS("assets/items/Dimensional_Portal.png")
-	g.dogNPCImg = g.loadImageFromFS("assets/npc/drone dog.png")
-	g.npc2Img = g.loadImageFromFS("assets/npc/mry_dgh_angry.png")
 
-	// Load car sprite sheets for level 3
+	// Load NPC sprites
+	g.femalePortraitImg = g.loadImageFromFS("assets/npc/portrait female.png")
+	g.femaleWalkImg = g.loadImageFromFS("assets/npc/walk and idle.png")
+
+	// Load car sprite sheets
 	g.blueCarImg = g.loadImageFromFS("assets/npc/Blue_LIMO_CLEAN_All_000-sheet.png")
 	g.policeCarImg = g.loadImageFromFS("assets/npc/POLICE_CLEAN_ALLD0000-sheet.png")
 }
@@ -171,10 +173,12 @@ func (g *Game) loadLevel(level int) {
 		g.player.x = 100
 		g.player.y = 100
 
-		// Add 2 NPCs to level 2
+		// Add NPCs to level 2
 		g.npcs = []*NPC{
-			NewNPC(400, 300, g.dogNPCImg, 150, true), // Horizontal movement
-			NewNPC(800, 200, g.npc2Img, 100, false),  // Vertical movement
+			NewAnimatedNPC(400, 300, g.femaleWalkImg, 24, 24, 8, 3, 150, true),  // Female walking - horizontal
+			NewAnimatedNPC(800, 200, g.femaleWalkImg, 24, 24, 8, 3, 100, false), // Female walking - vertical
+			NewStaticNPC(600, 500, g.femalePortraitImg, 80, false),              // Female portrait - vertical
+			NewStaticNPC(300, 600, g.femalePortraitImg, 120, true),              // Female portrait - horizontal
 		}
 		g.cars = []*Car{} // No cars on level 2
 
@@ -195,12 +199,14 @@ func (g *Game) loadLevel(level int) {
 		g.player.x = 100
 		g.player.y = 100
 
-		// Add MORE NPCs to level 3 - make it harder!
+		// Add MANY NPCs to level 3 - FINAL CHALLENGE!
 		g.npcs = []*NPC{
-			NewNPC(300, 250, g.dogNPCImg, 200, true), // Horizontal - longer range
-			NewNPC(600, 400, g.npc2Img, 150, false),  // Vertical
-			NewNPC(900, 300, g.dogNPCImg, 180, true), // Another horizontal
-			NewNPC(450, 600, g.npc2Img, 120, false),  // Another vertical
+			NewAnimatedNPC(300, 250, g.femaleWalkImg, 24, 24, 8, 3, 200, true),  // Female walking 1 - horizontal
+			NewAnimatedNPC(900, 300, g.femaleWalkImg, 24, 24, 8, 3, 180, true),  // Female walking 2 - horizontal
+			NewAnimatedNPC(600, 400, g.femaleWalkImg, 24, 24, 8, 3, 150, false), // Female walking 3 - vertical
+			NewAnimatedNPC(450, 600, g.femaleWalkImg, 24, 24, 8, 3, 120, false), // Female walking 4 - vertical
+			NewStaticNPC(750, 150, g.femalePortraitImg, 100, true),              // Female portrait 1 - horizontal
+			NewStaticNPC(200, 500, g.femalePortraitImg, 130, false),             // Female portrait 2 - vertical
 		}
 
 		// Add CARS that move randomly - AVOID THEM!
@@ -381,15 +387,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			item.Draw(screen, g.cameraX, g.cameraY)
 		}
 
-		// Draw portal (only if unlocked or always visible)
+		// Draw portal - animate always, but with different opacity
 		if g.portalUnlocked {
-			g.portal.Draw(screen, g.cameraX, g.cameraY)
+			// Full opacity when unlocked
+			g.portal.DrawWithAlpha(screen, g.cameraX, g.cameraY, 1.0)
 		} else {
-			// Draw grayed out portal
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(g.portal.x-g.cameraX, g.portal.y-g.cameraY)
-			op.ColorScale.ScaleAlpha(0.3)
-			screen.DrawImage(g.portal.image, op)
+			// 30% opacity when locked (still animates!)
+			g.portal.DrawWithAlpha(screen, g.cameraX, g.cameraY, 0.3)
 		}
 
 		// Draw NPCs

@@ -8,34 +8,37 @@ import (
 )
 
 const (
-	FRAME_COUNT     = 8  // Your sprites have 8 frames
-	ANIMATION_SPEED = 80 // milliseconds per frame (fast smooth animation)
+	FRAME_COUNT         = 8   // Your sprites have 8 frames
+	ANIMATION_SPEED     = 80  // milliseconds per frame (fast smooth animation)
+	NPC_ANIMATION_SPEED = 150 // Slower animation for NPCs (less choppy)
 )
 
 type AnimatedSprite struct {
-	sheet        *ebiten.Image
-	frameWidth   int
-	frameHeight  int
-	currentFrame int
-	lastUpdate   time.Time
-	row          int // which row in the sprite sheet (for different animations)
-	frameCount   int // number of frames to cycle through
+	sheet          *ebiten.Image
+	frameWidth     int
+	frameHeight    int
+	currentFrame   int
+	lastUpdate     time.Time
+	row            int // which row in the sprite sheet (for different animations)
+	frameCount     int // number of frames to cycle through
+	animationSpeed int // milliseconds per frame (can be customized per sprite)
 }
 
 func NewAnimatedSprite(sheet *ebiten.Image, frameWidth, frameHeight int) *AnimatedSprite {
 	return &AnimatedSprite{
-		sheet:       sheet,
-		frameWidth:  frameWidth,
-		frameHeight: frameHeight,
-		lastUpdate:  time.Now(),
-		row:         0,           // default to first row (down animation)
-		frameCount:  FRAME_COUNT, // default to 8 frames for player sprites
+		sheet:          sheet,
+		frameWidth:     frameWidth,
+		frameHeight:    frameHeight,
+		lastUpdate:     time.Now(),
+		row:            0,               // default to first row (down animation)
+		frameCount:     FRAME_COUNT,     // default to 8 frames for player sprites
+		animationSpeed: ANIMATION_SPEED, // default animation speed
 	}
 }
 
 func (a *AnimatedSprite) Update() {
 	now := time.Now()
-	if now.Sub(a.lastUpdate) > ANIMATION_SPEED*time.Millisecond {
+	if now.Sub(a.lastUpdate) > time.Duration(a.animationSpeed)*time.Millisecond {
 		a.currentFrame = (a.currentFrame + 1) % a.frameCount
 		a.lastUpdate = now
 	}

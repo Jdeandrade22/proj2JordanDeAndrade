@@ -42,16 +42,18 @@ go run .
 
 ### Level 2 - Getting Harder
 1. Collect more fish while avoiding the bad items
-2. Watch out for the **2 animated NPCs** that move around the map:
-   - **Drone Dog** (brown): Moves horizontally back and forth
-   - **Angry Character** (pink-haired): Moves vertically up and down
+2. Watch out for the **4 NPCs** that move around the map:
+   - **2x Female Characters** (walking animation): Animated, patrol horizontally and vertically
+   - **2x Female Portraits** (static): Move horizontally and vertically
 3. Collect 9 fish to unlock the portal
 4. Enter the portal to reach Level 3!
 
 ### Level 3 - FINAL CHALLENGE! 🏆 🚗
 1. The ultimate test with a beautiful new map!
-2. Face **4 NPCs** patrolling the level - twice as many!
-3. **NEW: 2 MOVING CARS!** - Blue Limo & Police Car
+2. Face **6 NPCs** patrolling the level - maximum chaos!
+   - **4x Animated Female Characters** (walking) - patrol in all directions
+   - **2x Female Portraits** (static) - horizontal and vertical movement
+3. **2 MOVING CARS!** - Blue Limo & Police Car
    - Cars move RANDOMLY across the map
    - Much faster than NPCs
    - Touching a car = INSTANT GAME OVER!
@@ -96,7 +98,7 @@ go run .
 ✅ **Collection Counter**: Always visible at the top of the screen  
 ✅ **Portal System**: Unlocks at 9 items, leads to next level  
 ✅ **Three Levels**: Progress through Level 1 → Level 2 → Level 3 (Final Boss!)  
-✅ **Animated NPCs**: 2 NPCs on Level 2, 4 NPCs + 2 CARS on Level 3 for ultimate challenge!  
+✅ **Animated NPCs**: 4 diverse NPCs on Level 2, 6 NPCs + 2 CARS on Level 3 for ultimate challenge!  
 ✅ **Animated Player**: Cat sprite with 8 directional walk animations  
 ✅ **Boundary Collision**: Player cannot move off the map  
 ✅ **Embedded Assets**: All assets loaded using go:embed  
@@ -110,24 +112,29 @@ go run .
 - No NPCs (peaceful exploration level)
 
 ### Level 2
-1. **Drone Dog** (Brown/tan colored)
-   - Moves horizontally left and right
-   - Has a mechanical/robotic appearance
-   
-2. **Murong Yi Character** (Pink-haired character)
-   - Moves vertically up and down
-   - Has an angry expression
-   - From the Dragon Hero visual novel series
+1. **Female Character - Walking** (Brown-haired girl)
+   - Smooth 8-frame walking animation
+   - 2 NPCs: one moves horizontally, one moves vertically
+   - Small animated sprite
+
+2. **Female Portrait** (Brown-haired girl portrait)
+   - Static sprite (no animation)
+   - 2 NPCs: one moves horizontally, one moves vertically
+   - Larger portrait-style image
 
 ### Level 3 - FINAL CHALLENGE! 🚗
-- **4 NPCs** patrolling the map!
-  - 2x Drone Dogs moving horizontally with longer patrol ranges
-  - 2x Murong Yi characters moving vertically
+- **6 NPCs** patrolling the map!
+  - **4x Female Walking Characters** (animated, 8-frame animation)
+    - 2 move horizontally with longer patrol ranges
+    - 2 move vertically
+  - **2x Female Portraits** (static)
+    - 1 moves horizontally
+    - 1 moves vertically
 - **2 CARS** moving randomly across the map!
-  - **Blue Limo** (cyan/blue car) - Moves at medium speed with random direction changes
-  - **Police Car** (police vehicle) - Moves FASTER with unpredictable patterns
+  - **Blue Limo** (cyan/blue car) - Moves at medium speed with random direction changes, animated
+  - **Police Car** (police vehicle) - Moves FASTER with unpredictable patterns, animated
   - **WARNING**: Touching ANY car = INSTANT GAME OVER!
-- Much harder to navigate - good luck!
+- Maximum challenge - good luck!
 
 ---
 

@@ -5,11 +5,11 @@ import (
 )
 
 type Player struct {
-	walkSprites [8]*AnimatedSprite // All 8 walk animations
+	walkSprites [8]*AnimatedSprite //8 imgaes
 	x, y        float64
 	width       int
 	height      int
-	direction   int // 0-7 for 8 directions
+	direction   int
 	isMoving    bool
 	speed       float64
 }
@@ -20,11 +20,10 @@ func NewPlayer(x, y float64, walkSprites [8]*ebiten.Image) *Player {
 		y:         y,
 		width:     64,
 		height:    64,
-		direction: 0, // facing down initially
+		direction: 0,
 		speed:     3.0,
 	}
 
-	// Initialize walk sprites
 	for i := 0; i < 8; i++ {
 		p.walkSprites[i] = NewAnimatedSprite(walkSprites[i], 64, 64)
 	}
@@ -35,7 +34,6 @@ func NewPlayer(x, y float64, walkSprites [8]*ebiten.Image) *Player {
 func (p *Player) Update(mapWidth, mapHeight int) {
 	p.isMoving = false
 
-	// Handle 8-directional movement
 	moveX := 0.0
 	moveY := 0.0
 
@@ -51,11 +49,10 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 		moveY = 1
 	}
 
-	// Calculate direction (0-7) based on movement
 	if moveX != 0 || moveY != 0 {
 		p.isMoving = true
 
-		// Determine direction index (0-7)
+		//rnad movement (ai)
 		if moveY < 0 && moveX == 0 {
 			p.direction = 1 // Up
 		} else if moveY < 0 && moveX > 0 {
@@ -74,9 +71,9 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 			p.direction = 0 // Up-Left
 		}
 
-		// Normalize diagonal movement
+		// run cycle
 		if moveX != 0 && moveY != 0 {
-			moveX *= 0.707 // sqrt(2)/2 for diagonal
+			moveX *= 0.707 //diag
 			moveY *= 0.707
 		}
 
@@ -84,7 +81,7 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 		p.y += moveY * p.speed
 	}
 
-	// Keep player within map bounds
+	//boundaries
 	if p.x < 0 {
 		p.x = 0
 	}
@@ -102,7 +99,7 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 	if p.isMoving {
 		p.walkSprites[p.direction].Update()
 	} else {
-		// When not moving, show first frame of current direction
+		//initialize frame
 		p.walkSprites[p.direction].currentFrame = 0
 	}
 }
@@ -114,8 +111,7 @@ func (p *Player) Draw(target *ebiten.Image, cameraX, cameraY float64) {
 }
 
 func (p *Player) GetBounds() (float64, float64, float64, float64) {
-	// Make the hitbox smaller - add padding on all sides
-	hitboxPadding := 16.0 // pixels of padding on each side
+	hitboxPadding := 16.0 // hitbox increase
 	return p.x + hitboxPadding,
 		p.y + hitboxPadding,
 		float64(p.width) - (hitboxPadding * 2),
