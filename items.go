@@ -52,4 +52,3 @@ func (i *Item) CheckCollision(px, py, pw, ph float64) bool {
 		py < i.y+float64(i.height) &&
 		py+ph > i.y
 }
-

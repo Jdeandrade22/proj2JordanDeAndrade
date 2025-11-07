@@ -119,9 +119,17 @@ func (g *Game) loadLevel(level int) {
 			"orig_big copy.png": img,
 		}
 
-		// Create player for level 1
-		playerImg := g.loadImageFromFS("assets/sprites/walk.png")
-		g.player = NewPlayer(100, 100, playerImg)
+		// Create player for level 1 - Cat character with all 8 directions
+		var walkSprites [8]*ebiten.Image
+		var attackSprites [8]*ebiten.Image
+
+		// Load all 8 walk sprites
+		for i := 0; i < 8; i++ {
+			walkSprites[i] = g.loadImageFromFS(fmt.Sprintf("assets/sprites/walk_%d.png", i+1))
+			attackSprites[i] = g.loadImageFromFS(fmt.Sprintf("assets/sprites/attack_%d.png", i+1))
+		}
+
+		g.player = NewPlayer(100, 100, walkSprites, attackSprites)
 
 		// No NPCs on level 1
 		g.npcs = []*NPC{}
@@ -354,8 +362,8 @@ func (g *Game) drawUI(screen *ebiten.Image) {
 	text.Draw(screen, portalText, basicfont.Face7x13, screenWidth-250, 20, color.RGBA{255, 215, 0, 255})
 
 	// Controls
-	controlsText := "Arrow Keys/WASD: Move"
-	text.Draw(screen, controlsText, basicfont.Face7x13, screenWidth-200, 35, color.RGBA{200, 200, 200, 255})
+	controlsText := "WASD: Move | Space/X: Attack"
+	text.Draw(screen, controlsText, basicfont.Face7x13, screenWidth-250, 35, color.RGBA{200, 200, 200, 255})
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -364,7 +372,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-	ebiten.SetWindowTitle("Cat Fish Quest - Project 2 - Jordan DeAndrade")
+	ebiten.SetWindowTitle("Cat's Quest - Project 2 - Jordan DeAndrade")
 	ebiten.SetWindowResizable(false)
 
 	game := NewGame()

@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	FRAME_COUNT     = 4
-	ANIMATION_SPEED = 200 // milliseconds per frame
+	FRAME_COUNT     = 8  // Your sprites have 8 frames
+	ANIMATION_SPEED = 80 // milliseconds per frame (fast smooth animation)
 )
 
 type AnimatedSprite struct {

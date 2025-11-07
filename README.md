@@ -1,17 +1,17 @@
-# Cat Fish Quest - Project 2
+# Cat's Quest - Project 2
 ## Jordan DeAndrade
 
 ---
 
 ## Game Description
-A cat-themed adventure game where you collect fish and avoid dangerous items while exploring two different levels! Navigate through beautiful tiled maps, dodge bad items, and make your way to the dimensional portal to progress.
+An exciting cat adventure where you collect fish, fight with your claws, and avoid dangerous items while exploring two different levels! Navigate through beautiful tiled maps with smooth 8-directional movement, dodge bad items, and make your way to the dimensional portal to progress.
 
 ---
 
 ## How to Run
 ```bash
-go build -o catfishquest
-./catfishquest
+go build
+./project2_jordandeandrade
 ```
 
 Or simply:
@@ -22,11 +22,13 @@ go run .
 ---
 
 ## Controls
-- **Arrow Keys** or **WASD**: Move the cat player
-  - ↑ / W: Move up
-  - ↓ / S: Move down
-  - ← / A: Move left
-  - → / D: Move right
+- **WASD** or **Arrow Keys**: Move your cat in 8 directions
+  - W / ↑: Move up
+  - S / ↓: Move down
+  - A / ←: Move left
+  - D / →: Move right
+  - **Diagonal movement**: Press two keys at once (e.g., W+D for up-right)
+- **Space** or **X**: Attack with claws!
 - **R**: Restart game (when game is over)
 
 ---
@@ -59,6 +61,7 @@ go run .
 ### Bad Items (AVOID These!) ⚠️
 - **Rusty Can** (red can): Dangerous! Touching one ends the game immediately
 - There are **5 bad items** on each level - be careful!
+- These are hazardous obstacles that will end your adventure!
 
 ### Special Items
 - **Dimensional Portal** (purple swirling portal):
@@ -74,12 +77,14 @@ go run .
 ✅ **Tiled Maps**: Two beautiful 20x20 tile maps  
 ✅ **TMX Files**: Maps loaded from level1.tmx and level2.tmx  
 ✅ **Camera System**: Follows the player smoothly  
+✅ **8-Directional Movement**: Smooth movement in all 8 directions with diagonal support  
+✅ **Attack System**: Press Space or X to attack with animated claw swipes!  
 ✅ **Items**: 17+ good items and 5 bad items per level  
 ✅ **Collection Counter**: Always visible at the top of the screen  
 ✅ **Portal System**: Unlocks at 9 items, leads to next level  
 ✅ **Two Levels**: Progress from Level 1 to Level 2  
 ✅ **Animated NPCs**: 2 NPCs on Level 2 with movement  
-✅ **Animated Player**: Cat sprite with directional animations  
+✅ **Animated Player**: Cat sprite with 8 directional walk and attack animations  
 ✅ **Boundary Collision**: Player cannot move off the map  
 ✅ **Embedded Assets**: All assets loaded using go:embed  
 ✅ **Game States**: Playing, Game Over, and Game Won screens  
@@ -170,4 +175,5 @@ go run .
 
 ## Have Fun! 🐱🐟
 Enjoy helping the cat collect fish and navigate through the dimensional portals!
+
 
