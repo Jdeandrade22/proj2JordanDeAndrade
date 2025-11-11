@@ -18,11 +18,12 @@ type AnimatedSprite struct {
 	frameHeight    int
 	currentFrame   int
 	lastUpdate     time.Time
-	row            int // which row in the sprite sheet (for different animations)
-	frameCount     int // number of frames to cycle through
-	animationSpeed int // milliseconds per frame (can be customized per sprite)
+	row            int 
+	frameCount     int 
+	animationSpeed int 
 }
 
+//functionality
 func NewAnimatedSprite(sheet *ebiten.Image, frameWidth, frameHeight int) *AnimatedSprite {
 	return &AnimatedSprite{
 		sheet:          sheet,
@@ -43,6 +44,7 @@ func (a *AnimatedSprite) Update() {
 	}
 }
 
+//draw
 func (a *AnimatedSprite) Draw(target *ebiten.Image, op *ebiten.DrawImageOptions) {
 	sheetCols := a.sheet.Bounds().Dx() / a.frameWidth
 	frameCol := a.currentFrame % sheetCols
