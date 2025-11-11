@@ -205,3 +205,5 @@ func (am *AudioManager) PlayOuchSound() {
 
 	player.Play()
 }
+
+//audio functions implemented with DeepseekR1
