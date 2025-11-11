@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	FRAME_COUNT         = 8   // Your sprites have 8 frames
-	ANIMATION_SPEED     = 80  // milliseconds per frame (fast smooth animation)
-	NPC_ANIMATION_SPEED = 150 // Slower animation for NPCs (less choppy)
+	FRAME_COUNT     = 8
+	ANIMATION_SPEED = 80
 )
 
 type AnimatedSprite struct {
@@ -30,9 +29,9 @@ func NewAnimatedSprite(sheet *ebiten.Image, frameWidth, frameHeight int) *Animat
 		frameWidth:     frameWidth,
 		frameHeight:    frameHeight,
 		lastUpdate:     time.Now(),
-		row:            0,               // default to first row (down animation)
-		frameCount:     FRAME_COUNT,     // default to 8 frames for player sprites
-		animationSpeed: ANIMATION_SPEED, // default animation speed
+		row:            0,
+		frameCount:     FRAME_COUNT,
+		animationSpeed: ANIMATION_SPEED,
 	}
 }
 
@@ -44,13 +43,7 @@ func (a *AnimatedSprite) Update() {
 	}
 }
 
-func (a *AnimatedSprite) SetAnimationRow(row int) {
-	a.row = row
-}
-
 func (a *AnimatedSprite) Draw(target *ebiten.Image, op *ebiten.DrawImageOptions) {
-	// Calculate frame position in the sprite sheet
-	// For multi-row sprites (like portal 3x2), calculate row and column
 	sheetCols := a.sheet.Bounds().Dx() / a.frameWidth
 	frameCol := a.currentFrame % sheetCols
 	frameRow := a.currentFrame / sheetCols
@@ -65,9 +58,4 @@ func (a *AnimatedSprite) Draw(target *ebiten.Image, op *ebiten.DrawImageOptions)
 	)).(*ebiten.Image)
 
 	target.DrawImage(frame, op)
-}
-
-func (a *AnimatedSprite) Reset() {
-	a.currentFrame = 0
-	a.lastUpdate = time.Now()
 }

@@ -18,7 +18,7 @@ type Item struct {
 	height         int
 	itemType       ItemType
 	image          *ebiten.Image
-	animatedSprite *AnimatedSprite //portal
+	animatedSprite *AnimatedSprite
 	collected      bool
 }
 
@@ -32,7 +32,6 @@ func NewItem(x, y float64, itemType ItemType, image *ebiten.Image) *Item {
 		image:    image,
 	}
 
-	//portal generation
 	if itemType == ItemPortal {
 		item.animatedSprite = NewAnimatedSprite(image, 32, 32)
 		item.animatedSprite.frameCount = 6
@@ -42,7 +41,6 @@ func NewItem(x, y float64, itemType ItemType, image *ebiten.Image) *Item {
 }
 
 func (i *Item) Update() {
-	//animation portal
 	if i.animatedSprite != nil {
 		i.animatedSprite.Update()
 	}
@@ -58,15 +56,10 @@ func (i *Item) DrawWithAlpha(screen *ebiten.Image, cameraX, cameraY, alpha float
 	}
 
 	op := &ebiten.DrawImageOptions{}
-
-	//item size
 	op.GeoM.Scale(2.0, 2.0)
 	op.GeoM.Translate(i.x-cameraX, i.y-cameraY)
-
-	// Apply alpha/opacity
 	op.ColorScale.ScaleAlpha(float32(alpha))
 
-	//load sprite
 	if i.animatedSprite != nil {
 		i.animatedSprite.Draw(screen, op)
 	} else {

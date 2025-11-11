@@ -1,211 +1,130 @@
 # Cat's Quest - Project 2
-## Jordan DeAndrade
+**Jordan DeAndrade**
 
----
+## Overview
 
-## Game Description
-An exciting cat adventure where you collect fish and avoid dangerous items while exploring three different levels! Navigate through beautiful tiled maps with smooth 8-directional movement, dodge bad items and NPCs, and make your way to the dimensional portal to progress.
+A 2D proto-game built with Ebitengine v2 featuring an animated cat protagonist navigating three distinct levels. Players collect fish while avoiding obstacles, utilizing a dynamic camera system that follows the player across large tiled maps.
 
----
+## Installation and Running
 
-## How to Run
+**Prerequisites:** Go 1.21 or higher
+
+```bash
+git clone https://github.com/Jdeandrade22/proj2JordanDeAndrade.git
+cd proj2JordanDeAndrade
+go run .
+```
+
+Or build and run:
 ```bash
 go build
 ./project2_jordandeandrade
 ```
 
-Or simply:
-```bash
-go run .
+## Controls
+
+- **WASD / Arrow Keys** - Move the cat in 8 directions (including diagonals)
+- **R** - Restart after game over or winning
+
+## Gameplay
+
+### Objective
+Collect 9 fish to unlock the portal in each level. Complete all three levels to win. Avoid hazards and moving obstacles.
+
+### Good Items (17 per level)
+- **Goldfish** - Yellow/orange fish
+- **Rainbow Trout** - Colorful fish
+- **Angelfish** - Elegant fish
+- **Bass** - Strong fish
+- **Catfish** - Whiskered fish
+
+Collect 9 to unlock the portal and advance to the next level.
+
+### Bad Items (5 per level)
+- **Rusty Can** (3x) - Red can sprite, instant game over
+- **Worm** (2x) - Pink worm sprite, instant game over
+
+### Vehicle Hazards (Levels 2 & 3)
+- **Blue Limo** - Cyan animated car with random movement
+- **Police Car** - Police vehicle with random patrol patterns
+
+Collision with vehicles triggers: "Cats only have 1 life around here!"
+
+### Portal
+- **Location:** Near bottom-right of each map
+- **Locked State:** 30% opacity until 9 items collected
+- **Unlocked State:** Full opacity with 6-frame animation
+- **Function:** Advances to next level (or wins game on Level 3)
+
+## Levels
+
+**Level 1 - Introduction**  
+Basic level with only fish and stationary hazards. No NPCs or vehicles.
+
+**Level 2 - NPCs and Vehicles**  
+Introduces animated Female Walking Characters and Female Portrait NPCs with patrol patterns. Blue Limo appears as the first moving hazard.
+
+**Level 3 - Full Challenge**  
+Four animated walking NPCs with extended patrol ranges. Both Blue Limo and Police Car move at high speeds with random patterns.
+
+## NPCs
+
+- **Female Walking Character** - 8-frame animated sprite, patrols horizontally or vertically
+- **Female Portrait** - Static sprite with predictable movement patterns
+- **Blue Limo** - Animated cyan vehicle with random movement
+- **Police Car** - Animated police vehicle with high-speed random patrol
+
+## Technical Features
+
+### Window and Display
+800x600 pixel window with fixed resolution.
+
+### Camera System
+Custom camera implementation that follows the player, keeping them centered while clamping to map boundaries. Matches the camera library interface from class with `Init()`, `Follow`, and `Draw()` methods.
+
+### Tiled Maps
+Three 20x20 tile maps loaded from TMX files using the `go-tiled` library. Each level is a separate map file stored in `/assets/background/`.
+
+### Animation System
+Custom sprite animation supporting multi-frame sheets with variable frame counts:
+- **Player:** 8 directional animations with unique sprites for each direction
+- **NPCs:** Varied frame counts and animation speeds
+- **Portal:** 6-frame looping animation
+
+### Asset Management
+All assets embedded using `go:embed` directive. Organized in subfolder structure:
+- `/assets/background/` - TMX files and tilesets
+- `/assets/sprites/` - Player directional sprites
+- `/assets/items/` - Collectibles and hazards
+- `/assets/npc/` - NPC and vehicle sprites
+
+### Collision Detection
+AABB collision system for item pickup, hazard contact, and portal entry. Player hitbox is 32x32 (smaller than visual sprite) for better gameplay feel.
+
+## Project Structure
+
+```
+proj2JordanDeAndrade/
+├── main.go          - Game loop, state management, level loading
+├── player.go        - Player movement and animation (8 directions)
+├── npcs.go          - NPC behavior and rendering
+├── cars.go          - Vehicle hazards with random movement
+├── items.go         - Collectibles, hazards, and portal
+├── tilemap.go       - TMX map loading and rendering
+├── animation.go     - Sprite animation system
+├── camera.go        - Camera (Init, Follow, Draw)
+├── go.mod           - Dependencies
+└── assets/          - Embedded game assets
 ```
 
----
+## Dependencies
 
-## Controls
-- **WASD** or **Arrow Keys**: Move your cat in 8 directions
-  - W / ↑: Move up
-  - S / ↓: Move down
-  - A / ←: Move left
-  - D / →: Move right
-  - **Diagonal movement**: Press two keys at once (e.g., W+D for up-right)
-- **R**: Restart game (when game is over)
+- `github.com/hajimehoshi/ebiten/v2` - 2D game engine
+- `github.com/lafriks/go-tiled` - TMX map parser
+- `golang.org/x/image` - Image processing
 
----
+## Author
 
-## Game Objectives
-
-### Level 1 - The Beginning
-1. Collect fish (good items) scattered around the map
-2. Avoid rusty cans (bad items) - they're dangerous for cats!
-3. Collect **at least 9 fish** to unlock the portal
-4. Enter the **Dimensional Portal** (purple swirling portal) to advance to Level 2
-
-### Level 2 - Getting Harder
-1. Collect more fish while avoiding the bad items
-2. Watch out for the **4 NPCs** that move around the map:
-   - **2x Female Characters** (walking animation): Animated, patrol horizontally and vertically
-   - **2x Female Portraits** (static): Move horizontally and vertically
-3. Collect 9 fish to unlock the portal
-4. Enter the portal to reach Level 3!
-
-### Level 3 - FINAL CHALLENGE! 🏆 🚗
-1. The ultimate test with a beautiful new map!
-2. Face **6 NPCs** patrolling the level - maximum chaos!
-   - **4x Animated Female Characters** (walking) - patrol in all directions
-   - **2x Female Portraits** (static) - horizontal and vertical movement
-3. **2 MOVING CARS!** - Blue Limo & Police Car
-   - Cars move RANDOMLY across the map
-   - Much faster than NPCs
-   - Touching a car = INSTANT GAME OVER!
-4. Collect 9 fish while dodging all the obstacles
-5. Enter the portal one last time to **WIN THE GAME!**
-
----
-
-## Items Guide
-
-### Good Items (Collect These!) 🐟
-- **Goldfish** (yellow/orange fish): Classic favorite!
-- **Rainbow Trout** (colorful fish): Beautiful catch!
-- **Angelfish** (elegant fish): Graceful swimmer!
-- **Bass** (strong fish): Big prize!
-- **Catfish** (whiskered fish): Perfect for a cat!
-- **Worm** (pink worm): Tasty snack!
-- Collect **9 or more** to unlock the portal on each level
-- Items spawn randomly from all types for variety!
-
-### Bad Items (AVOID These!) ⚠️
-- **Rusty Can** (red can): Dangerous! Touching one ends the game immediately
-- There are **5 bad items** on each level - be careful!
-- These are hazardous obstacles that will end your adventure!
-
-### Special Items
-- **Dimensional Portal** (purple swirling portal):
-  - Appears **locked** (grayed out) until you collect 9 fish
-  - Once **unlocked** (fully colored), walk into it to progress
-  - Located near the bottom-right corner of each map
-
----
-
-## Game Features
-
-✅ **Window Size**: 800x600 pixels  
-✅ **Tiled Maps**: Three beautiful 20x20 tile maps  
-✅ **TMX Files**: Maps loaded from level1.tmx, level2.tmx, and level3.tmx  
-✅ **Camera System**: Follows the player smoothly  
-✅ **8-Directional Movement**: Smooth movement in all 8 directions with diagonal support  
-✅ **Items**: 17+ good items and 5 bad items per level  
-✅ **Collection Counter**: Always visible at the top of the screen  
-✅ **Portal System**: Unlocks at 9 items, leads to next level  
-✅ **Three Levels**: Progress through Level 1 → Level 2 → Level 3 (Final Boss!)  
-✅ **Animated NPCs**: 4 diverse NPCs on Level 2, 6 NPCs + 2 CARS on Level 3 for ultimate challenge!  
-✅ **Animated Player**: Cat sprite with 8 directional walk animations  
-✅ **Boundary Collision**: Player cannot move off the map  
-✅ **Embedded Assets**: All assets loaded using go:embed  
-✅ **Game States**: Playing, Game Over, and Game Won screens  
-
----
-
-## NPC Recognition
-
-### Level 1
-- No NPCs (peaceful exploration level)
-
-### Level 2
-1. **Female Character - Walking** (Brown-haired girl)
-   - Smooth 8-frame walking animation
-   - 2 NPCs: one moves horizontally, one moves vertically
-   - Small animated sprite
-
-2. **Female Portrait** (Brown-haired girl portrait)
-   - Static sprite (no animation)
-   - 2 NPCs: one moves horizontally, one moves vertically
-   - Larger portrait-style image
-
-### Level 3 - FINAL CHALLENGE! 🚗
-- **6 NPCs** patrolling the map!
-  - **4x Female Walking Characters** (animated, 8-frame animation)
-    - 2 move horizontally with longer patrol ranges
-    - 2 move vertically
-  - **2x Female Portraits** (static)
-    - 1 moves horizontally
-    - 1 moves vertically
-- **2 CARS** moving randomly across the map!
-  - **Blue Limo** (cyan/blue car) - Moves at medium speed with random direction changes, animated
-  - **Police Car** (police vehicle) - Moves FASTER with unpredictable patterns, animated
-  - **WARNING**: Touching ANY car = INSTANT GAME OVER!
-- Maximum challenge - good luck!
-
----
-
-## Portal Recognition
-- The **Dimensional Portal** is a purple/violet swirling energy portal
-- Appears in the lower-right area of each map
-- When **locked**: Appears grayed out/transparent (need more fish!)
-- When **unlocked**: Appears bright and fully visible
-- **UI indicator** at the top shows portal status at all times
-
----
-
-## Game Over Conditions
-- Touching any **bad item** (rusty can) = Instant Game Over
-- Touching any **CAR** on Level 3 = Instant Game Over
-- Press **R** to restart from Level 1
-
----
-
-## Winning the Game
-1. Complete Level 1 by collecting 9+ fish and entering the portal
-2. Complete Level 2 by collecting 9+ fish and entering the portal  
-3. Complete Level 3 (FINAL!) by collecting 9+ fish and entering the portal
-4. Beat all 3 levels to see the victory screen!
-5. Press **R** to play again and try to beat your score!
-
----
-
-## Technical Details
-- **Engine**: Ebitengine (v2)
-- **Language**: Go 1.21
-- **Map Format**: TMX (Tiled Map Editor)
-- **Assets**: Embedded using `go:embed` directive
-- **Asset Organization**: All assets in subfolders under `/assets/`
-  - `/assets/background/` - Map files and tilesets
-  - `/assets/sprites/` - Player and portal sprites
-  - `/assets/items/` - Collectible items
-  - `/assets/npc/` - NPC character sprites
-
----
-
-## What's Implemented
-✅ All rubric requirements completed
-✅ 800x600 window (within 500-1000 requirement)
-✅ Two 20x20 tiled maps from TMX files
-✅ Camera system following player
-✅ 17+ good items randomly distributed
-✅ Collection counter displayed on screen
-✅ 5 bad items that trigger game over
-✅ Game over screen with restart option
-✅ Portal unlocks at 9 items
-✅ Level progression system
-✅ 2 animated NPCs on Level 2
-✅ Animated player with directional movement
-✅ Map boundary collision
-✅ go:embed for all assets
-✅ Organized asset folder structure
-✅ Complete README (this file!)
-
----
-
-## Credits
-- **Developer**: Jordan DeAndrade
-- **Game Engine**: Ebitengine
-- **Tiled Map Loader**: lafriks/go-tiled
-- **Art Assets**: Various free pixel art resources
-- **NPC Character**: Murong Yi from Dragon Hero series by linxuelian.itch.io
-
----
-
-## Have Fun! 🐱🐟
-Enjoy helping the cat collect fish and navigate through the dimensional portals!
-
-
+**Jordan DeAndrade**  
+Email: j2deandrade@student.bridgew.edu  
+GitHub: https://github.com/Jdeandrade22

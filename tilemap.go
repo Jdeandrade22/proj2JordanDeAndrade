@@ -119,4 +119,3 @@ func (tm *TileMap) Width() int {
 func (tm *TileMap) Height() int {
 	return tm.height
 }
-

@@ -5,7 +5,7 @@ import (
 )
 
 type Player struct {
-	walkSprites [8]*AnimatedSprite //8 imgaes
+	walkSprites [8]*AnimatedSprite
 	x, y        float64
 	width       int
 	height      int
@@ -52,28 +52,26 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 	if moveX != 0 || moveY != 0 {
 		p.isMoving = true
 
-		//rnad movement (ai)
 		if moveY < 0 && moveX == 0 {
-			p.direction = 1 // Up
+			p.direction = 1
 		} else if moveY < 0 && moveX > 0 {
-			p.direction = 2 // Up-Right
+			p.direction = 2
 		} else if moveY == 0 && moveX > 0 {
-			p.direction = 3 // Right
+			p.direction = 3
 		} else if moveY > 0 && moveX > 0 {
-			p.direction = 4 // Down-Right
+			p.direction = 4
 		} else if moveY > 0 && moveX == 0 {
-			p.direction = 5 // Down
+			p.direction = 5
 		} else if moveY > 0 && moveX < 0 {
-			p.direction = 6 // Down-Left
+			p.direction = 6
 		} else if moveY == 0 && moveX < 0 {
-			p.direction = 7 // Left
+			p.direction = 7
 		} else if moveY < 0 && moveX < 0 {
-			p.direction = 0 // Up-Left
+			p.direction = 0
 		}
 
-		// run cycle
 		if moveX != 0 && moveY != 0 {
-			moveX *= 0.707 //diag
+			moveX *= 0.707
 			moveY *= 0.707
 		}
 
@@ -81,7 +79,6 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 		p.y += moveY * p.speed
 	}
 
-	//boundaries
 	if p.x < 0 {
 		p.x = 0
 	}
@@ -95,11 +92,9 @@ func (p *Player) Update(mapWidth, mapHeight int) {
 		p.y = float64(mapHeight - p.height)
 	}
 
-	// Update animation
 	if p.isMoving {
 		p.walkSprites[p.direction].Update()
 	} else {
-		//initialize frame
 		p.walkSprites[p.direction].currentFrame = 0
 	}
 }
@@ -111,7 +106,7 @@ func (p *Player) Draw(target *ebiten.Image, cameraX, cameraY float64) {
 }
 
 func (p *Player) GetBounds() (float64, float64, float64, float64) {
-	hitboxPadding := 16.0 // hitbox increase
+	hitboxPadding := 16.0
 	return p.x + hitboxPadding,
 		p.y + hitboxPadding,
 		float64(p.width) - (hitboxPadding * 2),

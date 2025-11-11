@@ -1,7 +1,7 @@
 package main
 
 import (
-	image2 "image"
+	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -20,10 +20,9 @@ type NPC struct {
 	width        int
 	height       int
 	moveHorz     bool
-	scale        float64 // Scale factor for drawing
+	scale        float64
 }
 
-// NewStaticNPC creates a non-animated NPC (like the portrait)
 func NewStaticNPC(x, y float64, image *ebiten.Image, moveRange float64, moveHorizontal bool) *NPC {
 	return &NPC{
 		image:     image,
@@ -36,14 +35,13 @@ func NewStaticNPC(x, y float64, image *ebiten.Image, moveRange float64, moveHori
 		width:     64,
 		height:    64,
 		moveHorz:  moveHorizontal,
-		scale:     2.0, // Default scale for static NPCs
+		scale:     2.0,
 	}
 }
 
-// NewAnimatedNPC creates an NPC with sprite sheet animation
-func NewAnimatedNPC(x, y float64, image *ebiten.Image, frameWidth, frameHeight, cols, rows int, moveRange float64, moveHorizontal bool) *NPC {
+func NewAnimatedNPC(x, y float64, spriteSheet *ebiten.Image, frameWidth, frameHeight, cols int, moveRange float64, moveHorizontal bool) *NPC {
 	npc := &NPC{
-		image:     image,
+		image:     spriteSheet,
 		x:         x,
 		y:         y,
 		direction: 1,
@@ -53,29 +51,26 @@ func NewAnimatedNPC(x, y float64, image *ebiten.Image, frameWidth, frameHeight, 
 		width:     64,
 		height:    64,
 		moveHorz:  moveHorizontal,
-		scale:     3.0, // Bigger scale for animated NPCs
+		scale:     3.0,
 	}
 
-	// Extract frames from the second row (walking left animation)
 	npc.frames = make([]*ebiten.Image, cols)
 	for i := 0; i < cols; i++ {
 		x1 := i * frameWidth
 		x2 := x1 + frameWidth
 		y1 := frameHeight
 		y2 := frameHeight * 2
-		npc.frames[i] = image.SubImage(image2.Rect(x1, y1, x2, y2)).(*ebiten.Image)
+		npc.frames[i] = spriteSheet.SubImage(image.Rect(x1, y1, x2, y2)).(*ebiten.Image)
 	}
 
 	npc.currentFrame = 0
-	npc.frameDelay = 10 // Frames between animation changes
+	npc.frameDelay = 10
 	npc.frameCounter = 0
 
 	return npc
 }
 
-// Update handles NPC movement and animation
 func (npc *NPC) Update() {
-	// Movement logic
 	if npc.moveHorz {
 		npc.x += npc.direction
 		if npc.x >= npc.startX+npc.moveRange || npc.x <= npc.startX-npc.moveRange {
@@ -88,7 +83,6 @@ func (npc *NPC) Update() {
 		}
 	}
 
-	// Animation logic (if frames exist)
 	if len(npc.frames) > 0 {
 		npc.frameCounter++
 		if npc.frameCounter >= npc.frameDelay {
@@ -98,15 +92,11 @@ func (npc *NPC) Update() {
 	}
 }
 
-// Draw renders the NPC to the screen
 func (npc *NPC) Draw(target *ebiten.Image, cameraX, cameraY float64) {
 	op := &ebiten.DrawImageOptions{}
-
-	// Apply scale
 	op.GeoM.Scale(npc.scale, npc.scale)
 	op.GeoM.Translate(npc.x-cameraX, npc.y-cameraY)
 
-	// Draw animated frames or static image
 	if len(npc.frames) > 0 {
 		target.DrawImage(npc.frames[npc.currentFrame], op)
 	} else {
