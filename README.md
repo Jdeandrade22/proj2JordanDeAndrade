@@ -128,3 +128,5 @@ proj2JordanDeAndrade/
 **Jordan DeAndrade**  
 Email: j2deandrade@student.bridgew.edu  
 GitHub: https://github.com/Jdeandrade22
+
+some readme documentation provided through ai!
