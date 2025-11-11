@@ -266,9 +266,7 @@ func (g *Game) Update() error {
 		for _, car := range g.cars {
 			car.Update(g.tileMap.Width(), g.tileMap.Height())
 		}
-
 		g.portal.Update()
-
 		g.camera.Follow.W = int(g.player.x + float64(g.player.width)/2)
 		g.camera.Follow.H = int(g.player.y + float64(g.player.height)/2)
 
@@ -276,23 +274,20 @@ func (g *Game) Update() error {
 		for _, item := range g.items {
 			if item.CheckCollision(px, py, pw, ph) {
 				item.collected = true
-
 				// Play eating sound effect
 				g.audioManager.PlayEatSound()
-
 				if item.itemType == ItemGood {
 					g.itemsCollected++
-
+					
 					if g.itemsCollected >= 9 {
 						g.portalUnlocked = true
 					}
 				} else if item.itemType == ItemBad {
-					// Lost a life from eating bad item
 					g.audioManager.PlayOuchSound() // Play ouch sound when eating bad item
 					g.lives--
 					if g.lives > 0 {
 						g.state = StateLifeLost
-						g.lifeLostTimer = 90 // Show for 90 frames (~1.5 seconds)
+						g.lifeLostTimer = 90 
 					} else {
 						g.state = StateGameOver
 					}
@@ -302,12 +297,11 @@ func (g *Game) Update() error {
 
 		for _, car := range g.cars {
 			if car.CheckCollision(px, py, pw, ph) {
-				// Lost a life from car collision
 				g.audioManager.PlayCarHonkSound() // Play car honk sound when hit by car
 				g.lives--
 				if g.lives > 0 {
 					g.state = StateLifeLost
-					g.lifeLostTimer = 90 // Show for 90 frames (~1.5 seconds)
+					g.lifeLostTimer = 90 
 				} else {
 					g.state = StateCarDeath
 				}
@@ -331,10 +325,8 @@ func (g *Game) Update() error {
 			}
 		}
 	} else if g.state == StateLifeLost {
-		// Show life lost screen briefly, then respawn
 		g.lifeLostTimer--
 		if g.lifeLostTimer <= 0 {
-			// Respawn the player at the start position
 			g.player.x = 100
 			g.player.y = 100
 			g.state = StatePlaying
@@ -344,7 +336,7 @@ func (g *Game) Update() error {
 			g.state = StatePlaying
 			g.currentLevel = 1
 			g.itemsCollected = 0
-			g.lives = 3 // Reset lives
+			g.lives = 3 
 			g.loadLevel(1)
 		}
 	} else if g.state == StateGameWon {
@@ -352,7 +344,7 @@ func (g *Game) Update() error {
 			g.state = StatePlaying
 			g.currentLevel = 1
 			g.itemsCollected = 0
-			g.lives = 3 // Reset lives
+			g.lives = 3 
 			g.loadLevel(1)
 		}
 	}
@@ -405,32 +397,21 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 		g.player.Draw(g.world, 0, 0)
 		g.camera.Draw(g.world, screen)
-
-		// Draw semi-transparent overlay
 		overlay := ebiten.NewImage(screenWidth, screenHeight)
 		overlay.Fill(color.RGBA{0, 0, 0, 150})
 		screen.DrawImage(overlay, &ebiten.DrawImageOptions{})
-
-		// Draw "LIFE LOST!" message
 		text.Draw(screen, "LIFE LOST!", basicfont.Face7x13, screenWidth/2-50, screenHeight/2-60, color.RGBA{255, 100, 100, 255})
-
-		// Draw remaining hearts
 		heartsText := fmt.Sprintf("Lives Remaining: %s", g.getHeartsString())
 		text.Draw(screen, heartsText, basicfont.Face7x13, screenWidth/2-90, screenHeight/2-30, color.RGBA{255, 50, 50, 255})
-
-		// Draw respawn message
 		text.Draw(screen, "Respawning...", basicfont.Face7x13, screenWidth/2-60, screenHeight/2+10, color.White)
-
 	} else if g.state == StateGameOver {
 		text.Draw(screen, "GAME OVER!", basicfont.Face7x13, screenWidth/2-50, screenHeight/2, color.White)
 		text.Draw(screen, "You touched a bad item!", basicfont.Face7x13, screenWidth/2-90, screenHeight/2+20, color.White)
 		text.Draw(screen, "Press R to restart", basicfont.Face7x13, screenWidth/2-80, screenHeight/2+40, color.White)
-
 	} else if g.state == StateCarDeath {
 		text.Draw(screen, "GAME OVER!", basicfont.Face7x13, screenWidth/2-50, screenHeight/2-20, color.White)
 		text.Draw(screen, "Cats only have 1 life around here!", basicfont.Face7x13, screenWidth/2-120, screenHeight/2, color.White)
 		text.Draw(screen, "Press R to restart", basicfont.Face7x13, screenWidth/2-80, screenHeight/2+40, color.White)
-
 	} else if g.state == StateGameWon {
 		text.Draw(screen, "CONGRATULATIONS!", basicfont.Face7x13, screenWidth/2-70, screenHeight/2-20, color.White)
 		text.Draw(screen, "YOU BEAT ALL 3 LEVELS!", basicfont.Face7x13, screenWidth/2-100, screenHeight/2, color.White)
@@ -439,7 +420,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		text.Draw(screen, "Press R to play again", basicfont.Face7x13, screenWidth/2-90, screenHeight/2+70, color.White)
 	}
 }
-
 func (g *Game) getHeartsString() string {
 	hearts := ""
 	for i := 0; i < g.lives; i++ {
@@ -447,7 +427,6 @@ func (g *Game) getHeartsString() string {
 	}
 	return hearts
 }
-
 func (g *Game) drawUI(screen *ebiten.Image) {
 	uiRect := ebiten.NewImage(screenWidth, 40)
 	uiRect.Fill(color.RGBA{0, 0, 0, 180})
@@ -487,3 +466,5 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+//Ai implementation with sound effects and heart visuals
