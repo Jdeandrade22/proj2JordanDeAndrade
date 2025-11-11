@@ -72,15 +72,16 @@ func (c *Car) changeDirection() {
 	c.changeTimer = 120 + rand.Intn(180) 
 }
 
+
+//randomness
 func (c *Car) Update(mapWidth, mapHeight int) {
-	// Move the car
 	c.x += c.speedX
 	c.y += c.speedY
 
 	if c.x < 0 {
 		c.x = 0
 		c.speedX = -c.speedX
-		c.changeTimer = 60 // Change direction soon
+		c.changeTimer = 60 
 	}
 	if c.y < 0 {
 		c.y = 0
@@ -97,8 +98,6 @@ func (c *Car) Update(mapWidth, mapHeight int) {
 		c.speedY = -c.speedY
 		c.changeTimer = 60
 	}
-
-	// Animate the car (cycle through frames)
 	c.animTimer++
 	if c.animTimer >= 8 { 
 		c.animTimer = 0
@@ -127,8 +126,6 @@ func (c *Car) Draw(target *ebiten.Image, cameraX, cameraY float64) {
 	scaleX := float64(c.width) / frameWidth
 	scaleY := float64(c.height) / frameHeight
 	op.GeoM.Scale(scaleX, scaleY)
-
-	// Rotate car based on movement direction
 	angle := math.Atan2(c.speedY, c.speedX)
 	op.GeoM.Translate(-float64(c.width)/2, -float64(c.height)/2) 
 	op.GeoM.Rotate(angle)
@@ -144,3 +141,4 @@ func (c *Car) CheckCollision(px, py, pw, ph float64) bool {
 		py < c.y+float64(c.height) &&
 		py+ph > c.y
 }
+//car animation randomness added through DeepseekR1
