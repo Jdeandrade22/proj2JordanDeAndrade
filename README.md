@@ -123,6 +123,10 @@ proj2JordanDeAndrade/
 - `github.com/lafriks/go-tiled` - TMX map parser
 - `golang.org/x/image` - Image processing
 
+
+## BROKEN:
+- cop car on 3rd lvl never played correctly
+
 ## Author
 
 **Jordan DeAndrade**  
